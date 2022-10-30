@@ -4,7 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
 
 @Data
 @Entity
@@ -12,11 +15,16 @@ import javax.persistence.Entity;
 @NoArgsConstructor
 public class AppUser {
 
-    //private Long appUserId
-    //private String firstName
-    //private String lastName
-    //private String email
-    //private String password
-    //private String username
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long appUserId;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String password;
+    private String username;
+    private Date userCreatedDate;
+    @ManyToMany(fetch = FetchType.EAGER)
+    private Collection<Role> roles = new ArrayList<>();
 
 }
