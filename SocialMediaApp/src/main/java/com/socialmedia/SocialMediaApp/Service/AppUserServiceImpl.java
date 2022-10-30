@@ -7,6 +7,7 @@ import com.socialmedia.SocialMediaApp.Repo.RoleRepo;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.bytebuddy.asm.Advice;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -15,8 +16,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
+import java.time.LocalTime;
 
 @Service
 @RequiredArgsConstructor
@@ -44,12 +49,14 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
     }
 
     @Override
-    public void saveAppUser(AppUser appUser) {
+    public AppUser saveAppUser(AppUser appUser) {
+
         appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
         String email = appUser.getEmail();
+        appUser.setUserCreatedDate(new Date(System.currentTimeMillis()));
         appUserRepo.save(appUser);
         addRoleToAppUser(email, "ROLE_USER");
-
+        return appUser;
     }
 
     @Override
@@ -63,8 +70,10 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
     }
 
     @Override
-    public void addRoleToAppUser(String email, String role) {
-
+    public void addRoleToAppUser(String email, String roleName) {
+        AppUser appUser = appUserRepo.findByEmail(email);
+        Role role = roleRepo.findByName(roleName);
+        appUser.getRoles().add(role);
     }
 
 
