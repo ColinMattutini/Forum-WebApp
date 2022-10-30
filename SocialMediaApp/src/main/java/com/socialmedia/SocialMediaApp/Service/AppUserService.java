@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 public interface AppUserService {
 
-    void saveAppUser(AppUser appUser);
+    AppUser saveAppUser(AppUser appUser);
     AppUser getAppUser(String email);
     void saveRole(Role role);
     void addRoleToAppUser(String email, String role);
