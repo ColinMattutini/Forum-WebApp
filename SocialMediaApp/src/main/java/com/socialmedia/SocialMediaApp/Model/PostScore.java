@@ -1,11 +1,30 @@
 package com.socialmedia.SocialMediaApp.Model;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+
+@Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class PostScore {
 
-    //private Long userReview Id
-    //private ENUM review
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long postScoreId;
 
-    //One User many reviews (only one per post)
-    //private AppUser appUser
-    //private Post post;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "ReviewType")
+    private ReviewEnum review;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "appUserId", referencedColumnName = "appUserId")
+    private AppUser appUser;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "postId", referencedColumnName = "postId")
+    private Post post;
 }
