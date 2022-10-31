@@ -60,8 +60,8 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
     }
 
     @Override
-    public AppUser getAppUser(String email) {
-        return null;
+    public AppUser getAppUserByEmail(String email) {
+        return appUserRepo.findByEmail(email);
     }
 
     @Override
