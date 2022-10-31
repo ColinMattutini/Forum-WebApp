@@ -1,11 +1,24 @@
 package com.socialmedia.SocialMediaApp.Model;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+
+@Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 public class PostTotalScore {
 
-    //private Long postScoreId
-    //private Integer positiveScore
-    //private Integer negative Score
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long postTotalScoreId;
+    private Integer positiveScoreTotal;
+    private Integer negativeScoreTotal;
 
-    //One Score to One Post One to one
-    //private Post post;
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "postId", referencedColumnName = "postId")
+    private Post post;
 }
