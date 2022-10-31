@@ -4,21 +4,33 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
+import javax.persistence.*;
+import java.util.Date;
 
 @Data
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 public class Post {
-    //private Long postId
-    //private String postName
-    //private Text? postDescription
-    //Many to One / One to Many private AppUser appUser;
 
-    //Many posts to one topic
-    ////One to Many/Many to One private Topics topics;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long postId;
 
-    //private Date postCreationDate;
+    private String postName;
+
+    @Lob
+    @Column(columnDefinition = "TEXT", name = "postDescription")
+    private String postDescription;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "appUserId", referencedColumnName = "appUserId")
+    private AppUser appUser;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "topicId", referencedColumnName = "topicId")
+    private Topic topic;
+
+    private Date postCreationDate;
 
 }
