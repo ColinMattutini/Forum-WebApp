@@ -1,5 +1,6 @@
 package com.socialmedia.SocialMediaApp.Model;
 
+import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,6 +21,7 @@ public class PostScore {
     @Column(name = "ReviewType")
     private ReviewEnum review;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "appUserId", referencedColumnName = "appUserId")
     private AppUser appUser;
