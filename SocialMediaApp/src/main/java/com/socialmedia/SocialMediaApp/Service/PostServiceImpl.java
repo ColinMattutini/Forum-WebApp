@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +39,15 @@ public class PostServiceImpl implements PostService{
 
     @Override
     public void deletePost(Post post) {
+        Long postId = post.getPostId();
+        Optional<Post> oldPost = Optional.ofNullable(getPost(postId));
+        if(oldPost.isPresent()){
+            Post tempPost = oldPost.get();
+            tempPost.setPostDescription("DELETED");
+            tempPost.setPostName("DELETED");
+            tempPost.setPostDeletionDate(new Date(System.currentTimeMillis()));
+            postRepo.save(tempPost);
+        }
 
     }
 
@@ -58,8 +68,7 @@ public class PostServiceImpl implements PostService{
 
     @Override
     public List<Post> getAllPostsByTopic(Topic topic) {
-        List<Post> posts = new ArrayList<>();
-        postRepo.findByTopic(topic).forEach(posts::add);
+        List<Post> posts = postRepo.findByTopic(topic).stream().filter(e -> e.getPostDeletionDate() == null).collect(Collectors.toList());
         return posts;
     }
 }
