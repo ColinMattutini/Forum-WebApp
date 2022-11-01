@@ -1,6 +1,7 @@
 package com.socialmedia.SocialMediaApp.Security;
 
-import com.socialmedia.SocialMediaApp.Util.CustomAuthFilter;
+import com.socialmedia.SocialMediaApp.Util.CustomAuthenticationFilter;
+import com.socialmedia.SocialMediaApp.Util.CustomAuthorizationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -33,12 +34,14 @@ public class SecurityConfig {
     @CrossOrigin(origins = "http://localhost:3000")
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
 
-        CustomAuthFilter customAuthenticationFilter = new CustomAuthFilter(authenticationManager());
+        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager());
         customAuthenticationFilter.setFilterProcessesUrl("/api/login");
         http.cors().and().csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.authorizeRequests().anyRequest().permitAll();
-        //http.addFilterBefore(new CustomAuthFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.authorizeRequests().antMatchers("holder").hasAnyAuthority("ROLE_ADMIN");
+        http.authorizeRequests().antMatchers("/user/{email}/post/{postId}/comment/newcomment", "/user/{email}/topic/{topicName}/post/savepost", "user/{email}/topic/{topicName}/posts/{postId}", "/user/{email}/post/{postId}/review").hasAnyAuthority("ROLE_USER");
+        http.authorizeRequests().antMatchers("/user/signup", "/post/{postId}/comments", "/topic/{topicName}/posts", "post/{postId}/negativeScore", "post/{postId}/positiveScore", "/api/topic/newTopic").permitAll();
+        http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
         http.addFilter(customAuthenticationFilter);
         //http.authorizeRequests().anyRequest();
         return http.build();
