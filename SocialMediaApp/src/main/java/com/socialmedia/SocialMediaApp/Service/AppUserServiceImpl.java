@@ -1,13 +1,14 @@
 package com.socialmedia.SocialMediaApp.Service;
 
 import com.socialmedia.SocialMediaApp.Model.AppUser;
+import com.socialmedia.SocialMediaApp.Model.EmailToken;
 import com.socialmedia.SocialMediaApp.Model.Role;
 import com.socialmedia.SocialMediaApp.Repo.AppUserRepo;
 import com.socialmedia.SocialMediaApp.Repo.RoleRepo;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.bytebuddy.asm.Advice;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -21,7 +22,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.time.LocalTime;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -33,14 +34,17 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
     private final AppUserRepo appUserRepo;
     private final PasswordEncoder passwordEncoder;
 
+    private final EmailTokenServiceImpl emailTokenService;
+
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         AppUser appUser = appUserRepo.findByEmail(email);
-        if(appUser == null){
+        if(appUser == null || !appUser.isEnabled()){
             log.error("Email {} not found.", email);
             throw new UsernameNotFoundException("Email {} not found. Please check the username is correct.");
-        } else{
+        }
+        else{
             log.info("Email {} found successfully!", email);
         }
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
@@ -52,10 +56,15 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
     public AppUser saveAppUser(AppUser appUser) {
 
         appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
-        String email = appUser.getEmail();
+//        String email = appUser.getEmail();
         appUser.setUserCreatedDate(new Date(System.currentTimeMillis()));
+        appUser.setEnabled(false);
         appUserRepo.save(appUser);
-        addRoleToAppUser(email, "ROLE_USER");
+//        addRoleToAppUser(email, "ROLE_USER");
+        String token = UUID.randomUUID().toString();
+        EmailToken emailToken = new EmailToken(token, LocalDateTime.now(), LocalDateTime.now().plusMinutes(30), appUser);
+        emailTokenService.saveEmailToken(emailToken);
+        emailTokenService.sendEmail(appUser ,token);
         return appUser;
     }
 
@@ -75,6 +84,10 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
         Role role = roleRepo.findByName(roleName);
         appUser.getRoles().add(role);
     }
+
+
+
+
 
 
 }
