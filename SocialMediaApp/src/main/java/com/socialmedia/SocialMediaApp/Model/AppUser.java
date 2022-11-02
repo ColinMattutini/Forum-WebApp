@@ -1,8 +1,8 @@
 package com.socialmedia.SocialMediaApp.Model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -13,7 +13,10 @@ import java.util.Date;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-public class AppUser {
+@Getter
+@Setter
+@EqualsAndHashCode
+public class AppUser{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,5 +29,7 @@ public class AppUser {
     private Date userCreatedDate;
     @ManyToMany(fetch = FetchType.EAGER)
     private Collection<Role> roles = new ArrayList<>();
+    private boolean enabled;
+
 
 }
