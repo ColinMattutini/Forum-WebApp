@@ -6,6 +6,7 @@ import com.socialmedia.SocialMediaApp.Repo.AppUserRepo;
 import com.socialmedia.SocialMediaApp.Repo.RoleRepo;
 import com.socialmedia.SocialMediaApp.Service.AppUserServiceImpl;
 import com.socialmedia.SocialMediaApp.Service.EmailTokenServiceImpl;
+import com.socialmedia.SocialMediaApp.Util.EmailRegex;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
@@ -17,6 +18,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,11 +29,13 @@ public class AppUserController {
     private final AppUserServiceImpl appUserService;
     private final AppUserRepo appUserRepo;
     private final RoleRepo roleRepo;
-    private final EmailTokenServiceImpl emailTokenService;
+
+    private final EmailRegex emailRegex;
 
     @PostMapping("/user/signup")
     public ResponseEntity<?> saveAppUser(@RequestBody AppUser appUser){
         AppUser emailEntry = appUserRepo.findByEmail(appUser.getEmail());
+        String email = appUser.getEmail();
         AppUser usernameEntry = appUserRepo.findByUsername(appUser.getUsername());
         if(emailEntry != null){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Email already exists. Try a different email or try logging in.");
@@ -38,11 +43,14 @@ public class AppUserController {
         if(usernameEntry != null){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Username already exists. Please try a different one.");
         }
+        if(!emailRegex.validate(email)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("This is not a valid email format!");
+        }
+
         else{
             URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user/save").toUriString());
             return ResponseEntity.created(uri).body(appUserService.saveAppUser(appUser));
         }
-
     }
 
     @PostMapping("/role/save")
@@ -60,12 +68,11 @@ public class AppUserController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/user/confirm")
-    public String confirm(@RequestParam("token") String token){
-        return emailTokenService.confirmToken(token);
-    }
+//    @GetMapping("/user/confirm")
+//    public String confirm(@RequestParam("token") String token){
+//        return emailTokenService.confirmToken(token);
+//    }
 }
-
 
 @Data
 class RoleToUserForm{
