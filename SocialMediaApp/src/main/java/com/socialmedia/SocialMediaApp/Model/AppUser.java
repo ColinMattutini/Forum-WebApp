@@ -1,5 +1,7 @@
 package com.socialmedia.SocialMediaApp.Model;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.socialmedia.SocialMediaApp.Util.Views;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,6 +27,7 @@ public class AppUser{
     private String lastName;
     private String email;
     private String password;
+    @JsonView(Views.MyResponseViews.class)
     private String username;
     private Date userCreatedDate;
     @ManyToMany(fetch = FetchType.EAGER)
