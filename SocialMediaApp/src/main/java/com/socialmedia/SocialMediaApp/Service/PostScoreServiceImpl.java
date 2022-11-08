@@ -3,6 +3,7 @@ package com.socialmedia.SocialMediaApp.Service;
 import com.socialmedia.SocialMediaApp.Model.AppUser;
 import com.socialmedia.SocialMediaApp.Model.Post;
 import com.socialmedia.SocialMediaApp.Model.PostScore;
+import com.socialmedia.SocialMediaApp.Model.ReviewEnum;
 import com.socialmedia.SocialMediaApp.Repo.PostScoreRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,6 @@ import java.util.stream.Collectors;
 public class PostScoreServiceImpl implements PostScoreService{
 
     private final PostScoreRepo postScoreRepo;
-
 
     @Override
     public void saveScore(PostScore postScore, AppUser appUser, Post post) {
@@ -49,13 +49,13 @@ public class PostScoreServiceImpl implements PostScoreService{
 
     @Override
     public int getTotalPositivePostScore(Post post) {
-        List<PostScore> positiveScores = postScoreRepo.findByPost(post).stream().filter(e -> e.getReview().equals("POSITIVE")).collect(Collectors.toList());
+        List<PostScore> positiveScores = postScoreRepo.findByPost(post).stream().filter(e -> e.getReview().equals(ReviewEnum.POSITIVE)).collect(Collectors.toList());
         return positiveScores.size();
     }
 
     @Override
     public int getNegativePostScore(Post post) {
-        List<PostScore> negativeScores = postScoreRepo.findByPost(post).stream().filter(e -> e.getReview().equals("NEGATIVE")).collect(Collectors.toList());
+        List<PostScore> negativeScores = postScoreRepo.findByPost(post).stream().filter(e -> e.getReview().equals(ReviewEnum.NEGATIVE)).collect(Collectors.toList());
         return negativeScores.size();
     }
 }
