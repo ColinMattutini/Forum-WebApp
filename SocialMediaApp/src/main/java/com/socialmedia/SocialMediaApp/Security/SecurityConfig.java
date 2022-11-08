@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -38,12 +39,11 @@ public class SecurityConfig {
         customAuthenticationFilter.setFilterProcessesUrl("/api/login");
         http.cors().and().csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.authorizeRequests().antMatchers("holder").hasAnyAuthority("ROLE_ADMIN");
-        http.authorizeRequests().antMatchers("/user/{email}/post/{postId}/comment/newcomment", "/user/{email}/topic/{topicName}/post/savepost", "user/{email}/topic/{topicName}/posts/{postId}", "/user/{email}/post/{postId}/review").hasAnyAuthority("ROLE_USER");
-        http.authorizeRequests().antMatchers("/user/signup", "/post/{postId}/comments", "/topic/{topicName}/posts", "post/{postId}/negativeScore", "post/{postId}/positiveScore", "/api/topic/newTopic").permitAll();
+        //http.authorizeRequests().antMatchers("holder").hasAnyAuthority("ROLE_ADMIN");
+        http.authorizeRequests().antMatchers("/api/user/{email}/post/{postId}/comment/newcomment", "/api/user/{email}/topic/{topicName}/post/savepost", "/api/user/{email}/topic/{topicName}/posts/{postId}", "/api/user/{email}/post/{postId}/review").hasAnyAuthority("ROLE_USER");
+        http.authorizeRequests().antMatchers("/api/user/signup", "/api/post/{postId}/comments", "/api/topic/{topicName}/posts", "/api/post/{postId}/negativeScore", "/api/post/{postId}/positiveScore", "/api/topic/newTopic", "api/user/confirm", "/api/topic/all/posts").permitAll();
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
         http.addFilter(customAuthenticationFilter);
-        //http.authorizeRequests().anyRequest();
         return http.build();
     }
 
@@ -69,5 +69,6 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", config);
         return source;
     }
+
 
 }
