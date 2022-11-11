@@ -3,6 +3,7 @@ package com.socialmedia.SocialMediaApp.Service;
 
 import com.socialmedia.SocialMediaApp.Model.AppUser;
 import com.socialmedia.SocialMediaApp.Model.Post;
+import com.socialmedia.SocialMediaApp.Model.PostTotalScore;
 import com.socialmedia.SocialMediaApp.Model.Topic;
 import com.socialmedia.SocialMediaApp.Repo.PostRepo;
 import com.socialmedia.SocialMediaApp.Repo.TopicRepo;
@@ -26,6 +27,7 @@ public class PostServiceImpl implements PostService{
     private final PostRepo postRepo;
     private final TopicRepo topicRepo;
     private final AppUserServiceImpl appUserService;
+    private final PostTotalScoreServiceImpl postTotalScoreService;
 
     @Override
     public Post savePost(Post post, String topicName, String email) {
@@ -34,7 +36,11 @@ public class PostServiceImpl implements PostService{
         post.setAppUser(appUser);
         post.setTopic(topic);
         post.setPostCreationDate(new Date(System.currentTimeMillis()));
-        return postRepo.save(post);
+        PostTotalScore postTotalScore = postTotalScoreService.savePostTotalScore(post);
+        post.setPostTotalScore(postTotalScore);
+        postRepo.save(post);
+
+        return post;
     }
 
     @Override
@@ -63,7 +69,8 @@ public class PostServiceImpl implements PostService{
 
     @Override
     public List<Post> getAllPosts() {
-        return postRepo.findAll();
+        List<Post> posts = postRepo.findAll().stream().filter(e -> e.getPostDeletionDate() == null).collect(Collectors.toList());
+        return posts;
     }
 
     @Override

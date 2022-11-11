@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 public class PostScoreServiceImpl implements PostScoreService{
 
     private final PostScoreRepo postScoreRepo;
+    private final PostTotalScoreServiceImpl postTotalScoreService;
 
     @Override
     public void saveScore(PostScore postScore, AppUser appUser, Post post) {
@@ -27,10 +28,25 @@ public class PostScoreServiceImpl implements PostScoreService{
             postScore.setAppUser(appUser);
             postScore.setPost(post);
             postScoreRepo.save(postScore);
+            if(postScore.getReview().equals(ReviewEnum.POSITIVE)){
+                postTotalScoreService.increasePositiveScore(post);
+            } else if(postScore.getReview().equals(ReviewEnum.NEGATIVE)){
+                postTotalScoreService.increaseNegativeScore(post);
+            }
         }else{
             PostScore oldPostScore = postScores.get(0);
+            if(!oldPostScore.getReview().equals(postScore.getReview())){
+                if(postScore.getReview().equals(ReviewEnum.POSITIVE)){
+                    postTotalScoreService.increasePositiveScore(post);
+                    postTotalScoreService.decreaseNegativeScore(post);
+                } else if(postScore.getReview().equals(ReviewEnum.NEGATIVE)){
+                    postTotalScoreService.increaseNegativeScore(post);
+                    postTotalScoreService.decreasePositiveScore(post);
+                }
+            }
             oldPostScore.setReview(postScore.getReview());
             postScoreRepo.save(oldPostScore);
+
         }
 
     }

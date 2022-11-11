@@ -38,6 +38,11 @@ public class Post {
     @JsonView(Views.MyResponseViews.class)
     private Topic topic;
 
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "postTotalScoreId", referencedColumnName = "postTotalScoreId")
+    @JsonView(Views.MyResponseViews.class)
+    private PostTotalScore postTotalScore;
+
     private Date postCreationDate;
     private Date postDeletionDate = null;
 
