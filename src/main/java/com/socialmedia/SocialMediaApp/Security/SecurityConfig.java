@@ -41,7 +41,7 @@ public class SecurityConfig {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         //http.authorizeRequests().antMatchers("holder").hasAnyAuthority("ROLE_ADMIN");
         http.authorizeRequests().antMatchers("/api/user/{email}/post/{postId}/comment/newcomment", "/api/user/{email}/topic/{topicName}/post/savepost", "/api/user/{email}/topic/{topicName}/posts/{postId}", "/api/user/{email}/post/{postId}/review").hasAnyAuthority("ROLE_USER");
-        http.authorizeRequests().antMatchers("/api/user/signup", "/api/post/{postId}/comments", "/api/topic/{topicName}/posts", "/api/post/{postId}/negativeScore", "/api/post/{postId}/positiveScore", "/api/topic/newTopic", "api/user/confirm", "/api/topic/all/posts").permitAll();
+        http.authorizeRequests().antMatchers("/api/user/signup", "/api/post/{postId}/comments", "/api/topic/{topicName}/posts", "/api/post/{postId}/negativeScore", "/api/post/{postId}/positiveScore", "/api/topic/newTopic", "api/user/confirm", "/api/topic/all/posts", "api/role/save").permitAll();
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
         http.addFilter(customAuthenticationFilter);
         return http.build();
@@ -60,7 +60,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource(){
         final CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+        config.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://whimsical-centaur-0aeaf2.netlify.app"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PUT"));
         config.setAllowCredentials(true);
         config.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Control-Type", "Content-Type"));
