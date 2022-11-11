@@ -33,47 +33,42 @@ public class AppUserController {
     private final EmailRegex emailRegex;
 
     @PostMapping("/user/signup")
-    public ResponseEntity<?> saveAppUser(@RequestBody AppUser appUser){
+    public ResponseEntity<?> saveAppUser(@RequestBody AppUser appUser) {
+
         AppUser emailEntry = appUserRepo.findByEmail(appUser.getEmail());
         String email = appUser.getEmail();
         AppUser usernameEntry = appUserRepo.findByUsername(appUser.getUsername());
-        if(emailEntry != null){
+        if (emailEntry != null) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Email already exists. Try a different email or try logging in.");
         }
-        if(usernameEntry != null){
+        if (usernameEntry != null) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Username already exists. Please try a different one.");
         }
-        if(!emailRegex.validate(email)){
+        if (!emailRegex.validate(email)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("This is not a valid email format!");
-        }
-
-        else{
+        } else {
             URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user/save").toUriString());
             return ResponseEntity.created(uri).body(appUserService.saveAppUser(appUser));
         }
     }
 
     @PostMapping("/role/save")
-    public void saveRole(@RequestBody Role role){
-        if(roleRepo.findByName(role.getName()) != null){
+    public void saveRole(@RequestBody Role role) {
+        if (roleRepo.findByName(role.getName()) != null) {
             throw new IllegalArgumentException("Role already exists in database!");
-        } else{
+        } else {
             appUserService.saveRole(role);
         }
     }
 
     @PostMapping("/role/addroletouser")
-    public ResponseEntity<?> addRoleToUser(@RequestBody RoleToUserForm form){
+    public ResponseEntity<?> addRoleToUser(@RequestBody RoleToUserForm form) {
         appUserService.addRoleToAppUser(form.getEmail(), form.getRoleName());
         return ResponseEntity.ok().build();
     }
 
-//    @GetMapping("/user/confirm")
-//    public String confirm(@RequestParam("token") String token){
-//        return emailTokenService.confirmToken(token);
-//    }
-}
 
+}
 @Data
 class RoleToUserForm{
     private String email;
