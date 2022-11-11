@@ -85,9 +85,10 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
         appUser.getRoles().add(role);
     }
 
-
-
-
+    @Override
+    public String getUsername(String email) {
+        return appUserRepo.findByEmail(email).getUsername();
+    }
 
 
 }

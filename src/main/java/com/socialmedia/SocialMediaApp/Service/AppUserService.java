@@ -11,4 +11,5 @@ public interface AppUserService {
     AppUser getAppUserByEmail(String email);
     void saveRole(Role role);
     void addRoleToAppUser(String email, String role);
+    String getUsername(String email);
 }
