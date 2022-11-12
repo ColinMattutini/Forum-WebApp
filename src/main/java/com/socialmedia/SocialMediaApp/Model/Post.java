@@ -2,6 +2,7 @@ package com.socialmedia.SocialMediaApp.Model;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.socialmedia.SocialMediaApp.Util.Views;
+import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,11 +22,13 @@ public class Post {
     private Long postId;
 
     @JsonView(Views.MyResponseViews.class)
+    @NotNull
     private String postName;
 
     @Lob
     @Column(columnDefinition = "TEXT", name = "postDescription")
     @JsonView(Views.MyResponseViews.class)
+    @NotNull
     private String postDescription;
 
     @ManyToOne(fetch = FetchType.EAGER)
