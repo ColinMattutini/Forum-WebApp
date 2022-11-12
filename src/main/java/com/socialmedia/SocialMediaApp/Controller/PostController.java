@@ -46,6 +46,7 @@ public class PostController {
         }
     }
 
+    //JWT decode to validate person deleting post is the user who created the post
     @PutMapping("user/{email}/topic/{topicName}/posts/{postId}")
     public ResponseEntity<?> deletePostByUser(@PathVariable String email, @PathVariable Long postId, @RequestHeader (value = "Authorization") String jwt){
         Post post = postService.getPost(postId);
