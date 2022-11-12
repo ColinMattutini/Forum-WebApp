@@ -40,8 +40,8 @@ public class SecurityConfig {
         http.cors().and().csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         //http.authorizeRequests().antMatchers("holder").hasAnyAuthority("ROLE_ADMIN");
-        http.authorizeRequests().antMatchers("/api/user/{email}/post/{postId}/comment/newcomment", "/api/user/{email}/topic/{topicName}/post/savepost", "/api/user/{email}/topic/{topicName}/posts/{postId}", "/api/user/{email}/post/{postId}/review").hasAnyAuthority("ROLE_USER");
-        http.authorizeRequests().antMatchers("/api/user/signup", "/api/post/{postId}/comments", "/api/topic/{topicName}/posts", "/api/post/{postId}/negativeScore", "/api/post/{postId}/positiveScore", "/api/topic/newTopic", "api/user/confirm", "/api/topic/all/posts", "api/role/save").permitAll();
+        http.authorizeRequests().antMatchers("/api/user/{email}/post/{postId}/comment/newcomment", "/api/user/{email}/topic/{topicName}/post/savepost", "/api/user/{email}/topic/{topicName}/posts/{postId}", "/api/user/{email}/post/{postId}/review", "/api/post/{postId}/negativeScore", "/api/post/{postId}/positiveScore").hasAnyAuthority("ROLE_USER");
+        http.authorizeRequests().antMatchers("/api/user/signup", "/api/post/{postId}/comments", "/api/topic/{topicName}/posts", "/api/topic/newTopic", "api/user/confirm", "/api/topic/all/posts", "api/role/save").permitAll();
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
         http.addFilter(customAuthenticationFilter);
         return http.build();
